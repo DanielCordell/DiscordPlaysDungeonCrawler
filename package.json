@@ -18,6 +18,7 @@
   "homepage": "https://github.com/DanielCordell/DiscordPlaysDungeonCrawler#readme",
   "dependencies": {
     "discord.js": "^11.4.2",
-    "random-dungeon-generator": "^1.0.32"
+    "random-dungeon-generator": "^1.0.32",
+    "random-number": "0.0.9"
   }
 }
