@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/DanielCordell/DiscordPlaysDungeonCrawler/issues"
   },
-  "homepage": "https://github.com/DanielCordell/DiscordPlaysDungeonCrawler#readme"
+  "homepage": "https://github.com/DanielCordell/DiscordPlaysDungeonCrawler#readme",
+  "dependencies": {
+    "discord.js": "^11.4.2"
+  }
 }
