@@ -32,6 +32,7 @@ module.exports = class {
         switch (cell) {
           case 9:
             dungeonMessage += "🏃";
+            break;
           case 4:
             dungeonMessage += "🐉";
             break;
