@@ -8,13 +8,28 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
-  if (msg.content === 'ping') {
-    msg.reply('pong')
+  if (msg.content === 'reacc') {
+    msg.reply('pls')
     .then(message => {
-      var reactionCollector = message.createReactionCollector((reaction, user) => true, {time: 20000})
-      reactionCollector.on("end", (collected, reason) => {
-        getVotes(collected);
+
+      const collector = message.createReactionCollector((reaction, user) => true, { time: 15000 });
+      collector.on('collect', (reaction, reactionCollector) => {
+        console.log(`Collected ${reaction.emoji.name}`);
       });
+      collector.on('end', collected => {
+        var results = [];
+        collected.forEach(emoji => {
+          console.log(`Collected ${emoji.emoji} ${emoji.count} times`);
+          results.push({"emoji":emoji.emoji,"count":emoji.count});
+        });
+        max = Math.max(results[0].count,results[1].count,results[2].count)
+
+      });
+
+      //var reactionCollector = message.createReactionCollector((reaction, user) => true, {time: 20000})
+      //reactionCollector.on("end", (collected, reason) => {
+      //getVotes(collected);
+      //});
     });
   }
 });
@@ -24,11 +39,11 @@ client.login(config.token);
 function getVotes(collected){
   // console.log(getEmojis(collected)); // list all reactions
   var reactionsList = getEmojis(collected);
-  var up = 0;
+/*  var up = 0;
   var down = 0;
   var right = 0;
   var left = 0;
-  
+  var max = 0;
   for (i=0; i<reactionsList.length; i++){
     if (reactionsList[i] === '⬆️'){
       up++;
@@ -40,21 +55,17 @@ function getVotes(collected){
       left++;
     }
   }
-  if (up > down){
-    console.log("Up wins!");
-  } else if (down > up){
-    console.log("Down wins!");
-  } else console.log("Draw!");
+  max = (up > down ? up : down);
+  max = (left > right ? (left > max ? left : max) : (right > max ? right : max));
+  console.log(max, ' wins!')
+*/
 }
 
 function getEmojis(collected){
   return collected.map(item => item.emoji.name);
 }
 
-
-
 //console.log(collected.find(reaction => reaction.emoji.name === '👍').count) ;
-
 //var counter = collected.filter(item => item.emoji.name === '👍' || item.emoji.name  === '👎').length;
 //console.log(counter);
 
@@ -81,10 +92,10 @@ function parseDungeon(dungeon){
   dungeon.forEach(row => {
     row.forEach(cell => {
       switch (cell) {
-        case 1:         
+        case 1:
           dungeonMessage += "⬛";
           break;
-        default:         
+        default:
           dungeonMessage += "🔳";
           break;
       }
@@ -101,4 +112,3 @@ function parseDungeon(dungeon){
   });
   return dungeonMessages;
 }
-
