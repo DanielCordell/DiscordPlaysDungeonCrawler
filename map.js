@@ -12,13 +12,13 @@ const heightGen = rn.generator({min: 0, max: settings.height - 1, integer: true}
 const widthGen = rn.generator({min:0, max: settings.width - 1, integer: true});
 const itemGen = rn.generator({min: 5, max:  8, integer: true})
 
-function generateDungeon() {
+function generateDungeon(client) {
   var dungeon = normaliseDungeon(Dungeon.NewDungeon(settings));
   var populated = populateDungeon(dungeon)
-  return parseDungeon(populated)
+  return parseDungeon(populated, client)
 }
 
-function parseDungeon(dungeon){
+function parseDungeon(dungeon, client){
   console.log("Parsing")
   var dungeonMessages = [];
   var dungeonMessage = "";
@@ -105,3 +105,5 @@ function runUntilPopulate(dungeon, value){
     }
   }
 }
+
+module.exports = function(client) {return generateDungeon(client)}
