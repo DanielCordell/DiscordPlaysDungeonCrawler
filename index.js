@@ -9,11 +9,55 @@ client.on('ready', () => {
 
 client.on('message', msg => {
   if (msg.content === 'ping') {
-    msg.reply('pong');
+    msg.reply('pong')
+    .then(message => {
+      var reactionCollector = message.createReactionCollector((reaction, user) => true, {time: 20000})
+      reactionCollector.on("end", (collected, reason) => {
+        getVotes(collected);
+      });
+    });
   }
 });
 
 client.login(config.token);
+
+function getVotes(collected){
+  // console.log(getEmojis(collected)); // list all reactions
+  var reactionsList = getEmojis(collected);
+  var up = 0;
+  var down = 0;
+  var right = 0;
+  var left = 0;
+  
+  for (i=0; i<reactionsList.length; i++){
+    if (reactionsList[i] === '⬆️'){
+      up++;
+    } else if (reactionsList[i] === '⬇️'){
+      down++;
+    } else if (reactionsList[i] === '➡️'){
+      right++;
+    } else if (reactionsList[i] === '⬅️'){
+      left++;
+    }
+  }
+  if (up > down){
+    console.log("Up wins!");
+  } else if (down > up){
+    console.log("Down wins!");
+  } else console.log("Draw!");
+}
+
+function getEmojis(collected){
+  return collected.map(item => item.emoji.name);
+}
+
+
+
+//console.log(collected.find(reaction => reaction.emoji.name === '👍').count) ;
+
+//var counter = collected.filter(item => item.emoji.name === '👍' || item.emoji.name  === '👎').length;
+//console.log(counter);
+
 
 function generateDungeon() {
   const settings = {
