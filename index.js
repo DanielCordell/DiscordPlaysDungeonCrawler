@@ -43,8 +43,8 @@ function start() {
   var dungeon = Dungeon.generateDungeon();
   while (!doQuit) {
     Dungeon.parseDungeon(dungeon, client).forEach(message => getChannel().send(message));
-    getChannel().send("Vote on this message to move the player.\nEither ⬆️ ➡️ ⬇️ or ⬅️.").then(msg => {
-      
+    getChannel().send("Vote on this message in the next 15 seconds to move the player.\n* Either ⬆️ ➡️ ⬇️ or ⬅️.").then(msg => {
+
     });
     return;
   }
