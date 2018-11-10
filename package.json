@@ -1,0 +1,19 @@
+{
+  "name": "discordplaysdungeoncrawler",
+  "version": "1.0.0",
+  "description": "Dungeon Crawler for Discord",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielCordell/DiscordPlaysDungeonCrawler.git"
+  },
+  "author": "Daniel Cordell, Aakash Dadhich",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DanielCordell/DiscordPlaysDungeonCrawler/issues"
+  },
+  "homepage": "https://github.com/DanielCordell/DiscordPlaysDungeonCrawler#readme"
+}
