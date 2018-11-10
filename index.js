@@ -16,16 +16,14 @@ client.on('message', msg => {
   }
 });
 
-function start() {
+async function start() {
   var doQuit = false
   var dungeon = Dungeon.generateDungeon();
   getChannel().send("You are trapped in the Lincoln Castle Dungeons! See if you can make it out alive, together!")
   while (true) {
     Dungeon.parseDungeon(dungeon, client).forEach(message => getChannel().send(message));
-    console.log("test");
-    getChannel().send("Vote on **this** message to move the player.\n* Either ⬆️ ➡️ ⬇️ or ⬅️.")
-    .then(msg => {performVote(msg, dungeon)});
-    console.log("test2");
+    var msg = await getChannel().send("Vote on **this** message to move the player.\n* Either ⬆️ ➡️ ⬇️ or ⬅️.")
+    dungeon = await performVote(msg, dungeon);
   }
 }
 
@@ -33,33 +31,36 @@ function performVote(msg, dungeon) {
   var timerStarted = false;
   const collector = msg.createReactionCollector((reaction, user) => true, {});
   const testStr = "⬆️➡️⬇️⬅️";
-  collector.on('collect', (reaction, collector) => {
-    if (!timerStarted && testStr.includes(reaction.emoji.name)) {
-      msg.edit(msg.content + "\n**Someone has voted, 15 second timer stating.**");
-      setTimeout(() => {collector.stop()}, 15000)
-      timerStarted = true;
-      console.log(`Collected ${reaction.emoji.name}`);
-    }
-  });
 
-  collector.on('end', collected => {
-    var results = [];
-    collected.forEach(emoji => {
-      if (testStr.includes(emoji.emoji.name)) {
-        console.log(`Collected ${emoji.emoji.name}  ${emoji.count}  times`);
-        results.push({"emoji":emoji.emoji.name,"count":emoji.count});
+  return new Promise(function(resolve) {
+    collector.on('collect', (reaction, collector) => {
+      if (!timerStarted && testStr.includes(reaction.emoji.name)) {
+        msg.edit(msg.content + "\n**Someone has voted, 15 second timer stating.**");
+        setTimeout(() => {collector.stop()}, 15000)
+        timerStarted = true;
+        console.log(`Collected ${reaction.emoji.name}`);
       }
     });
-    max = results[0]
-    for (i=0; i<results.length; i++){
-      if (max.count < results[i].count){
-        max = results[i]
+
+    collector.on('end', collected => {
+      var results = [];
+      collected.forEach(emoji => {
+        if (testStr.includes(emoji.emoji.name)) {
+          console.log(`Collected ${emoji.emoji.name}  ${emoji.count}  times`);
+          results.push({"emoji":emoji.emoji.name,"count":emoji.count});
+        }
+      });
+      max = results[0]
+      for (i=0; i<results.length; i++){
+        if (max.count < results[i].count){
+          max = results[i]
+        }
       }
-    }
-    console.log(max.emoji, " wins the vote!");
-    getChannel().send(`${max.emoji} wins the vote!`);
-    return new Promise(resolve => resolve(movePlayer(max.emoji, dungeon)));
-  });
+      console.log(max.emoji, " wins the vote!");
+      getChannel().send(`${max.emoji} wins the vote!`);
+      resolve(movePlayer(max.emoji, dungeon));
+    });
+  })
 }
 
 function movePlayer(emoji, dungeon){
