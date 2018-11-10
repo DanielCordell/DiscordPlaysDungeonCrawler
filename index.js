@@ -19,12 +19,12 @@ function start() {
   getChannel().send("You are trapped in the Lincoln Castle Dungeons! See if you can make it out alive, together!")
   while (!doQuit) {
     Dungeon.parseDungeon(dungeon, client).forEach(message => getChannel().send(message));
-    getChannel().send("Vote on **this** message to move the player.\n* Either ⬆️ ➡️ ⬇️ or ⬅️.").then(msg => performVote(msg));
+    getChannel().send("Vote on **this** message to move the player.\n* Either ⬆️ ➡️ ⬇️ or ⬅️.").then(msg => performVote(msg, dungeon));
     return;
   }
 }
 
-function performVote(msg) {
+function performVote(msg, dungeon) {
   var timerStarted = false;
   const collector = msg.createReactionCollector((reaction, user) => true, {});
   const testStr = "⬆️➡️⬇️⬅️";
@@ -36,7 +36,7 @@ function performVote(msg) {
       console.log(`Collected ${reaction.emoji.name}`);
     }
   });
-  
+
   collector.on('end', collected => {
     var results = [];
     collected.forEach(emoji => {
@@ -53,7 +53,14 @@ function performVote(msg) {
     }
     console.log(max.emoji, " wins the vote!");
     getChannel().send(`${max.emoji} wins the vote!`);
+    return movePlayer(max.emoji, dungeon)
   });
+}
+
+function movePlayer(emoji, dungeon){
+
+
+  return newDungeon;
 }
 
 function getChannel() {
