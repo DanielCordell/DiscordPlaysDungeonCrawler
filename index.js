@@ -37,8 +37,9 @@ client.on('message', msg => {
       //getVotes(collected);
       //});
     });
+  }
   if (msg.content === 'ping') {
-    Dungeon.generateDungeon().forEach(message => getChannel().send(message))
+    Dungeon.generateDungeon().forEach(message => getChannel().send(message));
   }
 });
 
