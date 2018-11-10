@@ -25,20 +25,25 @@ function start() {
 }
 
 function performVote(msg) {
-  nullobj = {}
-  const collector = msg.createReactionCollector((reaction, user) => true, nullobj);
+  var timerStarted = false;
+  const collector = msg.createReactionCollector((reaction, user) => true, {});
+  const testStr = "⬆️➡️⬇️⬅️";
   collector.on('collect', (reaction, collector) => {
-    if (collector.options === nullobj) {
+    if (!timerStarted && testStr.includes(reaction.emoji.name)) {
       msg.edit(msg.content + "\n**Someone has voted, 15 second timer stating.**");
       setTimeout(() => {collector.stop()}, 15000)
+      timerStarted = true;
+      console.log(`Collected ${reaction.emoji.name}`);
     }
-    console.log(`Collected ${reaction.emoji.name}`);
   });
+  
   collector.on('end', collected => {
     var results = [];
     collected.forEach(emoji => {
-      console.log(`Collected ${emoji.emoji.name}  ${emoji.count}  times`);
-      results.push({"emoji":emoji.emoji.name,"count":emoji.count});
+      if (testStr.includes(emoji.emoji.name)) {
+        console.log(`Collected ${emoji.emoji.name}  ${emoji.count}  times`);
+        results.push({"emoji":emoji.emoji.name,"count":emoji.count});
+      }
     });
     max = results[0]
     for (i=0; i<results.length; i++){
