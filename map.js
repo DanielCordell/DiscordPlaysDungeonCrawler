@@ -1,5 +1,7 @@
 const Dungeon = require('random-dungeon-generator')
-var rn = require('random-number');
+const rn = require('random-number');
+
+const Enemy = require('./enemies');
 
 const settings = {
   width: 28,
@@ -10,9 +12,19 @@ const settings = {
 
 const heightGen = rn.generator({min: 0, max: settings.height - 1, integer: true});
 const widthGen = rn.generator({min:0, max: settings.width - 1, integer: true});
-const itemGen = rn.generator({min: 5, max:  8, integer: true})
+const itemGen = rn.generator({min: 8, max:  12, integer: true})
+
+var level = 1;
 
 module.exports = class {
+  
+  static getLevel() {
+    return level;
+  }
+  
+  static setLevel(lvl){
+    level = lvl
+  }
 
   static generateDungeon() {
     var dungeon = normaliseDungeon(Dungeon.NewDungeon(settings));
@@ -33,9 +45,6 @@ module.exports = class {
           case 9:
             dungeonMessage += "🏃";
             break;
-          case 4:
-            dungeonMessage += "🐉";
-            break;
           case 3:
             dungeonMessage += "🍎";
             break;
@@ -48,6 +57,9 @@ module.exports = class {
           case 0:
             dungeonMessage += "🔳";
             break;
+          default:
+            if (cell instanceof Enemy)
+              dungeonMessage += cell.emoji;
         }
       });
       if (count == 3) {
@@ -94,7 +106,7 @@ function populateDungeon(dungeon){
     dungeon = runUntilPopulate(dungeon, 3);
   }
   for (var i = 0; i < numberOfEnemies; ++i){
-    dungeon = runUntilPopulate(dungeon, 4);
+    dungeon = runUntilPopulate(dungeon, new Enemy(1 + (level-1)/5));
   }
 
   // Player

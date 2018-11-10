@@ -1,7 +1,10 @@
 const Discord = require('discord.js');
-const Dungeon = require('./map')
+const rn = require('random-number');
+
+const config = require('./config.json');
+const Dungeon = require('./map');
+
 const client = new Discord.Client();
-const config = require('./config.json')
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -88,6 +91,36 @@ function movePlayer(emoji, dungeon){
   }
   return dungeon;
 }
+
+function moveEnemies(dungeon) {
+  for (y = 1; y < dungeon.length - 1; ++y){
+    for (x = 1; x < dungeon[y].length - 1; ++x){
+      if (!dungeon[y,x] instanceof Enemy) continue;
+
+      randomDir = rn({min:0, max:3, integer:true});
+      for (i = 0; i < 4; ++i) {
+        // Next direction
+        randomDir += i;
+        randomDir = randomDir % 4;
+        switch (randomDir) {
+          case 0: // up
+            if (dungeon[y,x] !== 0) continue;
+            break;
+          case 1: // right 
+            break;
+          case 2: // down
+            break;
+          case 3: // left
+            break;
+          default:
+            console.log("Couldn't move enemy, ignoring.");
+          // give up
+        }
+      }
+    }
+  }
+}
+
 
 function getChannel() {
   return client.channels.get("510773738393042986");
