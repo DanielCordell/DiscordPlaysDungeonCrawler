@@ -1,13 +1,7 @@
 const Discord = require('discord.js');
-const Dungeon = require('./map')
-
+const Dungeon = require('random-dungeon-generator')
 const client = new Discord.Client();
-
 const config = require('./config.json')
-
-function getChannel() {
-  return client.channels.get("510773738393042986");
-}
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -25,10 +19,16 @@ client.on('message', msg => {
       collector.on('end', collected => {
         var results = [];
         collected.forEach(emoji => {
-          console.log(`Collected ${emoji.emoji} ${emoji.count} times`);
-          results.push({"emoji":emoji.emoji,"count":emoji.count});
+          console.log(`Collected ${emoji.emoji.name}  ${emoji.count}  times`);
+          results.push({"emoji":emoji.emoji.name,"count":emoji.count});
         });
-        max = Math.max(results[0].count,results[1].count,results[2].count)
+        max = results[0]
+        for (i=0; i<results.length; i++){
+          if (max.count < results[i].count){
+            max = results[i]
+          }
+        }
+        console.log(max.emoji, " wins the vote!");
 
       });
 
@@ -42,6 +42,8 @@ client.on('message', msg => {
     Dungeon.generateDungeon().forEach(message => getChannel().send(message));
   }
 });
+
+client.login(config.token);
 
 function getVotes(collected){
   // console.log(getEmojis(collected)); // list all reactions
@@ -72,14 +74,50 @@ function getEmojis(collected){
   return collected.map(item => item.emoji.name);
 }
 
-
-
 //console.log(collected.find(reaction => reaction.emoji.name === '👍').count) ;
-
 //var counter = collected.filter(item => item.emoji.name === '👍' || item.emoji.name  === '👎').length;
 //console.log(counter);
 
 
+function generateDungeon() {
+  const settings = {
+    width: 40,
+    height: 24,
+    minRoomSize: 5,
+    maxRoomSize: 10
+  }
+  console.log(settings)
+  return dungeon = Dungeon.NewDungeon(settings);
+}
+
 function getChannel() {
   return client.channels.get("510773738393042986");
+}
+
+function parseDungeon(dungeon){
+  var dungeonMessages = [];
+  var dungeonMessage = "";
+  var count = 0;
+  dungeon.forEach(row => {
+    row.forEach(cell => {
+      switch (cell) {
+        case 1:
+          dungeonMessage += "⬛";
+          break;
+        default:
+          dungeonMessage += "🔳";
+          break;
+      }
+    });
+    if (count == 3) {
+      dungeonMessages.push(dungeonMessage);
+      dungeonMessage = "";
+      count = 0;
+    }
+    else {
+      count++;
+      dungeonMessage += "\n";
+    }
+  });
+  return dungeonMessages;
 }
