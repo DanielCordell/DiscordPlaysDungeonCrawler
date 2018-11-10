@@ -105,22 +105,3 @@ function runUntilPopulate(dungeon, value){
     }
   }
 }
-
-
-
-function doStuff(dungeon){
-  dungeon.forEach(row => {
-    row.forEach(cell => {
-      switch (cell) {
-        case 1:         
-          dungeonMessage += "⬛";
-          break;
-        case 0:         
-          dungeonMessage += "🔳";
-          break;
-        case 2:
-          dungeonMessage += ":subway:";
-      }
-    });
-  });
-}
