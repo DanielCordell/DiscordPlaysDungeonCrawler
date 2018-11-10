@@ -41,6 +41,7 @@ client.on('message', msg => {
 function start() {
   var doQuit = false
   var dungeon = Dungeon.generateDungeon();
+  getChannel().send("You are trapped in the Lincoln Castle Dungeons! See if you can make it out alive, together!")
   while (!doQuit) {
     Dungeon.parseDungeon(dungeon, client).forEach(message => getChannel().send(message));
     getChannel().send("Vote on this message in the next 15 seconds to move the player.\n* Either ⬆️ ➡️ ⬇️ or ⬅️.").then(msg => {
