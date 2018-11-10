@@ -30,6 +30,8 @@ module.exports = class {
     dungeon.forEach(row => {
       row.forEach(cell => {
         switch (cell) {
+          case 9:
+            dungeonMessage += "🏃";
           case 4:
             dungeonMessage += "🐉";
             break;
@@ -85,6 +87,7 @@ function populateDungeon(dungeon){
   console.log("Populating")
   var numberOfPointBoosts = itemGen()
   var numberOfEnemies = itemGen() + 1
+  // Subway
   dungeon = runUntilPopulate(dungeon, 2);
   for (var i = 0; i < numberOfPointBoosts; ++i){
     dungeon = runUntilPopulate(dungeon, 3);
@@ -92,6 +95,11 @@ function populateDungeon(dungeon){
   for (var i = 0; i < numberOfEnemies; ++i){
     dungeon = runUntilPopulate(dungeon, 4);
   }
+
+  // Player
+  dungeon = runUntilPopulate(dungeon, 9);
+
+
   console.log("Finished Populating");
   return dungeon;
 }
