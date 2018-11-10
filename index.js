@@ -31,27 +31,25 @@ client.on('message', msg => {
         console.log(max.emoji, " wins the vote!");
 
       });
-
-      //var reactionCollector = message.createReactionCollector((reaction, user) => true, {time: 20000})
-      //reactionCollector.on("end", (collected, reason) => {
-      //getVotes(collected);
-      //});
     });
   }
-  if (msg.content === 'ping') {
-    Dungeon(client).forEach(message => getChannel().send(message));
+  if (msg.content === `<@${client.user.id}> start`){
+    start()
   }
 });
 
-client.login(config.token);
-
-
-//console.log(collected.find(reaction => reaction.emoji.name === '👍').count) ;
-//var counter = collected.filter(item => item.emoji.name === '👍' || item.emoji.name  === '👎').length;
-//console.log(counter);
-
-
+function start() {
+  var doQuit = false
+  var dungeon = Dungeon.generateDungeon();
+  while (!doQuit) {
+    Dungeon.parseDungeon(dungeon, client).forEach(message => getChannel().send(message));
+    return;
+  }
+}
 
 function getChannel() {
   return client.channels.get("510773738393042986");
 }
+
+
+client.login(config.token);

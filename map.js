@@ -12,53 +12,56 @@ const heightGen = rn.generator({min: 0, max: settings.height - 1, integer: true}
 const widthGen = rn.generator({min:0, max: settings.width - 1, integer: true});
 const itemGen = rn.generator({min: 5, max:  8, integer: true})
 
-function generateDungeon(client) {
-  var dungeon = normaliseDungeon(Dungeon.NewDungeon(settings));
-  var populated = populateDungeon(dungeon)
-  return parseDungeon(populated, client)
-}
-
-function parseDungeon(dungeon, client){
-  console.log("Parsing")
-  var dungeonMessages = [];
-  var dungeonMessage = "";
-  var count = 0;
-
-  const subway = client.emojis.find(emoji => emoji.name === "subway")
-
-  dungeon.forEach(row => {
-    row.forEach(cell => {
-      switch (cell) {
-        case 4:
-          dungeonMessage += "🐉";
-          break;
-        case 3:
-          dungeonMessage += "🍎";
-          break;
-        case 2:
-          dungeonMessage += subway;
-          break;
-        case 1:         
-          dungeonMessage += "⬛";
-          break;
-        case 0:         
-          dungeonMessage += "🔳";
-          break;
+module.exports = class {
+  
+  static generateDungeon() {
+    var dungeon = normaliseDungeon(Dungeon.NewDungeon(settings));
+    return populateDungeon(dungeon)
+  }
+  
+  static parseDungeon(dungeon, client){
+    console.log("Parsing")
+    var dungeonMessages = [];
+    var dungeonMessage = "";
+    var count = 0;
+  
+    const subway = client.emojis.find(emoji => emoji.name === "subway")
+  
+    dungeon.forEach(row => {
+      row.forEach(cell => {
+        switch (cell) {
+          case 4:
+            dungeonMessage += "🐉";
+            break;
+          case 3:
+            dungeonMessage += "🍎";
+            break;
+          case 2:
+            dungeonMessage += subway;
+            break;
+          case 1:         
+            dungeonMessage += "⬛";
+            break;
+          case 0:         
+            dungeonMessage += "🔳";
+            break;
+        }
+      });
+      if (count == 3) {
+        dungeonMessages.push(dungeonMessage);
+        dungeonMessage = "";
+        count = 0;
+      }
+      else {
+        count++;
+        dungeonMessage += "\n";
       }
     });
-    if (count == 3) {
-      dungeonMessages.push(dungeonMessage);
-      dungeonMessage = "";
-      count = 0;
-    }
-    else {
-      count++;
-      dungeonMessage += "\n";
-    }
-  });
-  console.log("Finished Parsing")
-  return dungeonMessages;
+    console.log("Finished Parsing")
+    return dungeonMessages;
+  }
 }
+
 
 // turn all room numbers into 0s
 function normaliseDungeon(dungeon){
@@ -79,7 +82,6 @@ function normaliseDungeon(dungeon){
 }
 
 function populateDungeon(dungeon){
-  console.log(dungeon);
   console.log("Populating")
   var numberOfPointBoosts = itemGen()
   var numberOfEnemies = itemGen() + 1
@@ -91,10 +93,8 @@ function populateDungeon(dungeon){
     dungeon = runUntilPopulate(dungeon, 4);
   }
   console.log("Finished Populating");
-  console.log(dungeon);
   return dungeon;
 }
-
 function runUntilPopulate(dungeon, value){
   while (true){
     var y = heightGen();
@@ -105,5 +105,3 @@ function runUntilPopulate(dungeon, value){
     }
   }
 }
-
-module.exports = function(client) {return generateDungeon(client)}
