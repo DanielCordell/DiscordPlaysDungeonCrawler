@@ -13,18 +13,18 @@ const widthGen = rn.generator({min:0, max: settings.width - 1, integer: true});
 const itemGen = rn.generator({min: 5, max:  8, integer: true})
 
 module.exports = class {
-  
+
   static generateDungeon() {
     var dungeon = normaliseDungeon(Dungeon.NewDungeon(settings));
     return populateDungeon(dungeon)
   }
-  
+
   static parseDungeon(dungeon, client){
     console.log("Parsing")
     var dungeonMessages = [];
     var dungeonMessage = "";
     var count = 0;
-  
+
     const subway = client.emojis.find(emoji => emoji.name === "subway")
   
     dungeon.forEach(row => {
@@ -42,10 +42,10 @@ module.exports = class {
           case 2:
             dungeonMessage += subway;
             break;
-          case 1:         
+          case 1:
             dungeonMessage += "⬛";
             break;
-          case 0:         
+          case 0:
             dungeonMessage += "🔳";
             break;
         }
@@ -72,9 +72,9 @@ function normaliseDungeon(dungeon){
   for (y = 0; y < dungeon.length; ++y) {
     for (x = 0; x < dungeon[y].length; ++x) {
       switch (dungeon[y][x]) {
-        case 1:         
+        case 1:
           break;
-        default:         
+        default:
           dungeon[y][x] = 0;
           break;
       }
