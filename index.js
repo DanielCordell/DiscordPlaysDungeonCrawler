@@ -19,14 +19,19 @@ function start() {
   getChannel().send("You are trapped in the Lincoln Castle Dungeons! See if you can make it out alive, together!")
   while (!doQuit) {
     Dungeon.parseDungeon(dungeon, client).forEach(message => getChannel().send(message));
-    getChannel().send("Vote on this message in the next 15 seconds to move the player.\n* Either ⬆️ ➡️ ⬇️ or ⬅️.").then(msg => performVote(msg));
+    getChannel().send("Vote on **this** message to move the player.\n* Either ⬆️ ➡️ ⬇️ or ⬅️.").then(msg => performVote(msg));
     return;
   }
 }
 
 function performVote(msg) {
-  const collector = msg.createReactionCollector((reaction, user) => true, { time: 15000 });
-  collector.on('collect', (reaction, reactionCollector) => {
+  nullobj = {}
+  const collector = msg.createReactionCollector((reaction, user) => true, nullobj);
+  collector.on('collect', (reaction, collector) => {
+    if (collector.options === nullobj) {
+      msg.edit(msg.content + "\n**Someone has voted, 15 second timer stating.**");
+      setTimeout(() => {collector.stop()}, 15000)
+    }
     console.log(`Collected ${reaction.emoji.name}`);
   });
   collector.on('end', collected => {
