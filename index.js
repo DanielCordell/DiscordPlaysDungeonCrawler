@@ -17,15 +17,39 @@ client.on('message', msg => {
   }
 });
 
+var PlayerStats = {
+  health: 0,
+  maxHealth: 0,
+  score: 0,
+}
+
 async function start() {
-  var doQuit = false
   var dungeon = Dungeon.generateDungeon();
+  var level = 0;
+
+  PlayerStats.maxHealth = 100;
+
   getChannel().send("You are trapped in the Lincoln Castle Dungeons! See if you can make it out alive, together!")
   while (true) {
+    if (level != Dungeon.getLevel() ) {
+      PlayerStats.health = PlayerStats.maxHealth;
+      level = Dungeon.getLevel()
+      getChannel().send(`Level **${level}**\nHealth: **${PlayerStats.health}**\nScore: **${PlayerStats.score}**`)
+    }
     Dungeon.parseDungeon(dungeon, client).forEach(message => getChannel().send(message));
     var msg = await getChannel().send("Vote on **this** message to move the player.\n* Either ⬆️ ➡️ ⬇️ or ⬅️.")
-    dungeon = await performVote(msg, dungeon);
-    dungeon = moveEnemies(dungeon);
+    var voteResult = await performVote(msg, dungeon);
+    if (voteResult.shouldQuit){
+      getChannel().send("Game Over!");
+      return;
+    }
+    if (voteResult.shouldLevel) {
+      Dungeon.setLevel(level+1);
+      dungeon = Dungeon.generateDungeon();
+      PlayerStats.maxHealth = parseInt(PlayerStats.maxHealth * 1.2);
+      PlayerStats.score += 1000;
+    }
+    else dungeon = moveEnemies(voteResult.dungeon);
   }
 }
 
@@ -68,12 +92,10 @@ function performVote(msg, dungeon) {
 function movePlayer(emoji, dungeon){
   // dungeon is just an array
   var playerCurrI = 0; var playerCurrJ = 0; var playerNewI = 0; var playerNewJ = 0;
-  console.log("EMOJI TESTING");
   // find 9 (player) in dungeon array
   for (i=0; i < dungeon.length; i++){
     if (playerCurrI !== 0 || playerCurrJ !== 0){
       console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
-      console.log(dungeon[i][j]);
       break;
     }
     for (j=0; j < dungeon[i].length; j++){
@@ -103,28 +125,25 @@ function movePlayer(emoji, dungeon){
     }
   }
 
+  if (dungeon[playerNewI][playerNewJ] === 3){
+    PlayerStats.score += 100;
+    PlayerStats.health = PlayerStats.maxHealth;
+    getChannel().send(`Health: **${PlayerStats.health}**\nScore: **${PlayerStats.score}**`);
+    dungeon[playerNewI][playerNewJ] = 0;
+  }
   if (dungeon[playerNewI][playerNewJ] === 0){
     dungeon[playerNewI][playerNewJ] = 9;
     dungeon[playerCurrI][playerCurrJ] = 0;
   } else {
-    getChannel().send("Invalid move.")
+    getChannel().send("Invalid move, please select another move and try again.")
   }
-
-    console.log("i: ", i, " j: ", j);
-    console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
-    console.log("NewI: ", playerNewI, " NewJ: ", playerNewJ);
-    console.log("NewLocationValue: ", dungeon[playerNewI][playerNewJ]);
-    return dungeon;
+  return {"dungeon":dungeon, "shouldLevel":false, "shouldQuit":false};
 }
-
-
 
 function moveEnemies(dungeon) {
   for (y = 1; y < dungeon.length - 1; ++y){
     for (x = 1; x < dungeon[y].length - 1; ++x){
-      console.log(dungeon[y][x]);
       if (!(dungeon[y][x] instanceof Enemy)) continue;
-      console.log(`moving enemy ${dungeon[y][x].constructor.name}`);
       var randomDir = rn({min:0, max:3, integer:true});
       for (i = 0; i < 4; ++i) {
         // Next direction
@@ -151,7 +170,7 @@ function moveEnemies(dungeon) {
           dungeon[y+1][x] = dungeon[y][x];
           dungeon[y][x] = temp;
           break;
-        } else { // left
+        } else if (randomDir == 3) { // left
           if (dungeon[y][x-1] !== 0) continue;
           dungeon[y][x].moved = true;
           var temp = dungeon[y][x-1];
