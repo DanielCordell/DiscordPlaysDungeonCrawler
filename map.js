@@ -17,11 +17,11 @@ const itemGen = rn.generator({min: 8, max:  12, integer: true})
 var level = 1;
 
 module.exports = class {
-  
+
   static getLevel() {
     return level;
   }
-  
+
   static setLevel(lvl){
     level = lvl
   }
@@ -38,7 +38,7 @@ module.exports = class {
     var count = 0;
 
     const subway = client.emojis.find(emoji => emoji.name === "subway")
-  
+
     dungeon.forEach(row => {
       row.forEach(cell => {
         switch (cell) {
