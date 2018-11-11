@@ -123,8 +123,8 @@ function movePlayer(emoji, dungeon){
     }
   }
   if (dungeon[playerNewI][playerNewJ] instanceof Enemy){
-    var remainingHealth = dungeon[playerNewI][playerNewJ].hit(12);
-    getChannel().send(`You deal 12 damage to the ${dungeon[playerNewI][playerNewJ].name}`);
+    var remainingHealth = dungeon[playerNewI][playerNewJ].hit(23);
+    getChannel().send(`You deal 23 damage to the ${dungeon[playerNewI][playerNewJ].name}`);
     if (remainingHealth < 0){
       getChannel().send(`${dungeon[playerNewI][playerNewJ].name} has been killed! +150 score`)
       PlayerStats.score += 150;
@@ -142,8 +142,8 @@ function movePlayer(emoji, dungeon){
     }
   }
   if (dungeon[playerNewI][playerNewJ] === 2){
-    if (PlayerStats.score < 0){
-      getChannel().send("You must have 500 score to proceed. Slay some more monsters!");
+    if (PlayerStats.score < 200){
+      getChannel().send("You must have 200 score to proceed. Slay some more monsters!");
     } else {
       getChannel().send("Proceeding to the next level...");
       return {"dungeon":dungeon, "shouldLevel":true, "shouldQuit":false};
