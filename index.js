@@ -12,7 +12,7 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
-  if (msg.content === `<@${client.user.id}> start`){
+  if (msg.content === `!!start`){
     start()
   }
 });
@@ -20,8 +20,6 @@ client.on('message', msg => {
 async function start() {
   var doQuit = false
   var dungeon = Dungeon.generateDungeon();
-  console.log(dungeon.length);
-  console.log(dungeon[0].length);
   getChannel().send("You are trapped in the Lincoln Castle Dungeons! See if you can make it out alive, together!")
   while (true) {
     Dungeon.parseDungeon(dungeon, client).forEach(message => getChannel().send(message));
@@ -39,8 +37,8 @@ function performVote(msg, dungeon) {
   return new Promise(function(resolve) {
     collector.on('collect', (reaction, collector) => {
       if (!timerStarted && testStr.includes(reaction.emoji.name)) {
-        msg.edit(msg.content + "\n**Someone has voted, 15 second timer stating.**");
-        setTimeout(() => {collector.stop()}, 15000)
+        msg.edit(msg.content + "\n**Someone has voted, 5 second timer stating.**");
+        setTimeout(() => {collector.stop()}, 5000)
         timerStarted = true;
         console.log(`Collected ${reaction.emoji.name}`);
       }
@@ -71,7 +69,6 @@ function movePlayer(emoji, dungeon){
   // dungeon is just an array
   switch(emoji){
     case "⬅" :
-      console.log("EMOJI TESTING");
       var playerCurrI = 0; var playerCurrJ = 0; var playerNewI = 0; var playerNewJ = 0;
       // find 9 (player) in dungeon array
       for (i=0; i < dungeon.length; i++){
@@ -83,7 +80,7 @@ function movePlayer(emoji, dungeon){
         for (j=0; j < dungeon[i].length; j++){
           if (dungeon[i][j] === 9){
             playerCurrI = i;
-            playerCurrJ = j; // WORKAROUND
+            playerCurrJ = j;
             playerNewI = i;
             playerNewJ = playerCurrJ-1;
           }
@@ -106,9 +103,8 @@ function movePlayer(emoji, dungeon){
 function moveEnemies(dungeon) {
   for (y = 1; y < dungeon.length - 1; ++y){
     for (x = 1; x < dungeon[y].length - 1; ++x){
-      console.log(dungeon[y][x]);
       if (!(dungeon[y][x] instanceof Enemy)) continue;
-      console.log(`moving enemy ${dungeon[y][x].constructor.name}`);
+      if (dungeon[y][x].moved) continue;
       var randomDir = rn({min:0, max:3, integer:true});
       for (i = 0; i < 4; ++i) {
         // Next direction
@@ -116,34 +112,39 @@ function moveEnemies(dungeon) {
         randomDir = randomDir % 4;
         if (randomDir == 0) { //up
           if (dungeon[y-1][x] !== 0) continue;
+          dungeon[y][x].moved = true;
           var temp = dungeon[y-1][x];
           dungeon[y-1][x] = dungeon[y][x];
           dungeon[y][x] = temp;
-          console.log("up");
           break;
         } else if (randomDir == 1) { // right
           if (dungeon[y][x+1] !== 0) continue;
+          dungeon[y][x].moved = true;
           var temp = dungeon[y][x+1];
           dungeon[y][x+1] = dungeon[y][x];
           dungeon[y][x] = temp;
-          console.log("down");
           break;
         } else if (randomDir == 2) { // down
           if (dungeon[y+1][x] !== 0) continue;
+          dungeon[y][x].moved = true;
           var temp = dungeon[y+1][x];
           dungeon[y+1][x] = dungeon[y][x];
           dungeon[y][x] = temp;
-          console.log("left");
           break;
         } else { // left
           if (dungeon[y][x-1] !== 0) continue;
+          dungeon[y][x].moved = true;
           var temp = dungeon[y][x-1];
           dungeon[y][x-1] = dungeon[y][x];
           dungeon[y][x] = temp;
-          console.log("right");
           break;
         }
       }
+    }
+  }
+  for (y = 1; y < dungeon.length - 1; ++y) {
+    for (x = 1; x < dungeon[y].length - 1; ++x) {
+      if (dungeon[y][x] instanceof Enemy) dungeon[y][x].moved = false;
     }
   }
   return dungeon;
