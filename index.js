@@ -95,7 +95,6 @@ function movePlayer(emoji, dungeon){
   // find 9 (player) in dungeon array
   for (i=0; i < dungeon.length; i++){
     if (playerCurrI !== 0 || playerCurrJ !== 0){
-      console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
       break;
     }
     for (j=0; j < dungeon[i].length; j++){
@@ -144,6 +143,7 @@ function moveEnemies(dungeon) {
   for (y = 1; y < dungeon.length - 1; ++y){
     for (x = 1; x < dungeon[y].length - 1; ++x){
       if (!(dungeon[y][x] instanceof Enemy)) continue;
+      if (dungeon[y][x].moved) continue;
       var randomDir = rn({min:0, max:3, integer:true});
       for (i = 0; i < 4; ++i) {
         // Next direction
