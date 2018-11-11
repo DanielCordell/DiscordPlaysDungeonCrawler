@@ -124,7 +124,7 @@ function movePlayer(emoji, dungeon){
     }
   }
   if (dungeon[playerNewI][playerNewJ] instanceof Enemy){
-    var damage = rn({min:12, max:16, integer:true}) * level;
+    var damage = parseInt(rn({min:20, max:24, integer:true}) * level/2);
     var remainingHealth = dungeon[playerNewI][playerNewJ].hit(damage);
     getChannel().send(`You deal ${damage} damage to the ${dungeon[playerNewI][playerNewJ].name}`);
     if (remainingHealth < 0){
