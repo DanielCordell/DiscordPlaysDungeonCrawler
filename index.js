@@ -75,17 +75,17 @@ function movePlayer(emoji, dungeon){
       var playerCurrI = 0; var playerCurrJ = 0; var playerNewI = 0; var playerNewJ = 0;
       // find 9 (player) in dungeon array
       for (i=0; i < dungeon.length; i++){
-        if (playerCurrI != 0 || playerCurrJ != 0){
+        if (playerCurrI !== 0 || playerCurrJ !== 0){
           console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
           console.log(dungeon[i][j]);
           break;
         }
         for (j=0; j < dungeon[i].length; j++){
-          if (dungeon[i][j] === '9'){
+          if (dungeon[i][j] === 9){
             playerCurrI = i;
-            playerCurrJ = j;
+            playerCurrJ = j; // WORKAROUND
             playerNewI = i;
-            playerNewJ = j-1;
+            playerNewJ = playerCurrJ-1;
           }
         }
       }
@@ -93,6 +93,7 @@ function movePlayer(emoji, dungeon){
         dungeon[playerNewI][playerNewJ] = 9;
         dungeon[playerCurrI][playerCurrJ] = 0;
       }
+      console.log("i: ", i, " j: ", j);
       console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
       console.log("NewI: ", playerNewI, " NewJ: ", playerNewJ);
       console.log("NewLocationValue: ", dungeon[playerNewI][playerNewJ]);
