@@ -35,6 +35,23 @@ async function start() {
     if (level != Dungeon.getLevel() ) {
       PlayerStats.health = PlayerStats.maxHealth;
       level = Dungeon.getLevel()
+      if (config.demo && level >= 3) {
+        const subway = client.emojis.find(emoji => emoji.name === "subway").toString();
+        getChannel.send("**Congratulations, you made it out of the Lincoln Castle Dungeons!**");
+        var map = subway.repeat(23) + "\n";
+        map += map + map;
+        getChannel().send(map);
+        getChannel().send(map);
+        map = subway.repeat(23) + "\n";
+        map += subway.repeat(11) + "🏃" + subway.repeat(11) + "\n";
+        map += subway.repeat(23) + "\n";
+        getChannel().send(map);
+        map = subway.repeat(23) + "\n";
+        map += map + map;
+        getChannel().send(map);
+        getChannel().send(map);
+        return;
+      }
       getChannel().send(`Level **${level}**\nHealth: **${PlayerStats.health}**\nScore: **${PlayerStats.score}**`)
     }
     Dungeon.parseDungeon(dungeon, client).forEach(message => getChannel().send(message));
