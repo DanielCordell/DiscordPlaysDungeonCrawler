@@ -7,6 +7,8 @@ const Enemy = require('./enemies')
 
 const client = new Discord.Client();
 
+var level = 0;
+
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -25,7 +27,6 @@ var PlayerStats = {
 
 async function start() {
   var dungeon = Dungeon.generateDungeon();
-  var level = 0;
 
   PlayerStats.maxHealth = 100;
 
@@ -123,8 +124,9 @@ function movePlayer(emoji, dungeon){
     }
   }
   if (dungeon[playerNewI][playerNewJ] instanceof Enemy){
-    var remainingHealth = dungeon[playerNewI][playerNewJ].hit(12);
-    getChannel().send(`You deal 12 damage to the ${dungeon[playerNewI][playerNewJ].name}`);
+    var damage = rn({min:12, max:16, integer:true}) * level;
+    var remainingHealth = dungeon[playerNewI][playerNewJ].hit(damage);
+    getChannel().send(`You deal ${damage} damage to the ${dungeon[playerNewI][playerNewJ].name}`);
     if (remainingHealth < 0){
       getChannel().send(`${dungeon[playerNewI][playerNewJ].name} has been killed! +150 score`)
       PlayerStats.score += 150;
