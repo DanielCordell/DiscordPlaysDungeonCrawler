@@ -118,8 +118,7 @@ function movePlayer(emoji, dungeon){
             playerNewI = i-1;
             playerNewJ = playerCurrJ;
             break;
-        } // end of switch
-
+        } 
       }
     }
   }
@@ -170,6 +169,11 @@ function moveEnemies(dungeon) {
     for (x = 1; x < dungeon[y].length - 1; ++x){
       if (!(dungeon[y][x] instanceof Enemy)) continue;
       if (dungeon[y][x].moved) continue;
+
+      //Detect if player is next to enemy, if so then stay still.
+      if (dungeon[y][x-1] === 9 || dungeon[y][x+1] === 9 || dungeon[y-1][x] === 9 || dungeon[y+1][x] === 9)
+        continue;
+
       var randomDir = rn({min:0, max:3, integer:true});
       for (i = 0; i < 4; ++i) {
         // Next direction
