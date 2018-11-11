@@ -144,8 +144,9 @@ function movePlayer(emoji, dungeon){
     }
   }
   if (dungeon[playerNewI][playerNewJ] === 2){
-    if (PlayerStats.score < 0){
-      getChannel().send("You must have 500 score to proceed. Slay some more monsters!");
+    var minScoreAmount = 200 * level
+    if (PlayerStats.score < minScoreAmount){
+      getChannel().send(`You must have ${minScoreAmount} score to proceed. Slay some more monsters!`);
     } else {
       getChannel().send("Proceeding to the next level...");
       return {"dungeon":dungeon, "shouldLevel":true, "shouldQuit":false};
