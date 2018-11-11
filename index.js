@@ -68,62 +68,56 @@ function performVote(msg, dungeon) {
 function movePlayer(emoji, dungeon){
   // dungeon is just an array
   var playerCurrI = 0; var playerCurrJ = 0; var playerNewI = 0; var playerNewJ = 0;
-  switch(emoji){
-    case "⬅" :
-      console.log("EMOJI TESTING");
-      // find 9 (player) in dungeon array
-      for (i=0; i < dungeon.length; i++){
-        if (playerCurrI !== 0 || playerCurrJ !== 0){
-          console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
-          console.log(dungeon[i][j]);
-          break;
-        }
-        for (j=0; j < dungeon[i].length; j++){
-          if (dungeon[i][j] === 9){
-            playerCurrI = i;
-            playerCurrJ = j;
+  console.log("EMOJI TESTING");
+  // find 9 (player) in dungeon array
+  for (i=0; i < dungeon.length; i++){
+    if (playerCurrI !== 0 || playerCurrJ !== 0){
+      console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
+      console.log(dungeon[i][j]);
+      break;
+    }
+    for (j=0; j < dungeon[i].length; j++){
+      if (dungeon[i][j] === 9){
+        playerCurrI = i;
+        playerCurrJ = j;
+        switch(emoji){
+          case "⬅" :
             playerNewI = i;
             playerNewJ = playerCurrJ-1;
-          }
-        }
-      }
-      if (dungeon[playerNewI][playerNewJ] === 0){
-        dungeon[playerNewI][playerNewJ] = 9;
-        dungeon[playerCurrI][playerCurrJ] = 0;
-      }
-      console.log("i: ", i, " j: ", j);
-      console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
-      console.log("NewI: ", playerNewI, " NewJ: ", playerNewJ);
-      console.log("NewLocationValue: ", dungeon[playerNewI][playerNewJ]);
-      return dungeon;
-      break;
-
-      case "➡" :
-        console.log("EMOJI TESTING");
-        for (i=0; i < dungeon.length; i++){
-          if (playerCurrI !== 0 || playerCurrJ !== 0){
-            console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
-            console.log(dungeon[i][j]);
             break;
-          }
-          for (j=0; j < dungeon[i].length; j++){
-            if (dungeon[i][j] === 9){
-              playerCurrI = i;
-              playerCurrJ = j; // WORKAROUND
-              playerNewI = i;
-              playerNewJ = playerCurrJ+1;
-            }
-          }
-        }
-        if (dungeon[playerNewI][playerNewJ] === 0 || dungeon[playerNewI][playerNewJ] === 2 || dungeon[playerNewI][playerNewJ] === 3){
-          dungeon[playerNewI][playerNewJ] = 9;
-          dungeon[playerCurrI][playerCurrJ] = 0;
-        }
+          case "➡" :
+            playerNewI = i;
+            playerNewJ = playerCurrJ+1;
+            break;
+          case "⬇" :
+            playerNewI = i+1;
+            playerNewJ = playerCurrJ;
+            break;
+          case "⬆" :
+            playerNewI = i-1;
+            playerNewJ = playerCurrJ;
+            break;
+        } // end of switch
+
+      }
     }
+  }
 
+  if (dungeon[playerNewI][playerNewJ] === 0){
+    dungeon[playerNewI][playerNewJ] = 9;
+    dungeon[playerCurrI][playerCurrJ] = 0;
+  } else {
+    getChannel().send("Invalid move.")
+  }
 
-  return dungeon;
+    console.log("i: ", i, " j: ", j);
+    console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
+    console.log("NewI: ", playerNewI, " NewJ: ", playerNewJ);
+    console.log("NewLocationValue: ", dungeon[playerNewI][playerNewJ]);
+    return dungeon;
 }
+
+
 
 function moveEnemies(dungeon) {
   for (y = 1; y < dungeon.length - 1; ++y){
