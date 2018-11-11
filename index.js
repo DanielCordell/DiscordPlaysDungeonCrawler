@@ -37,7 +37,7 @@ async function start() {
       level = Dungeon.getLevel()
       if (config.demo && level >= 3) {
         const subway = client.emojis.find(emoji => emoji.name === "subway").toString();
-        getChannel.send("**Congratulations, you made it out of the Lincoln Castle Dungeons!**");
+        getChannel().send("**Congratulations, you made it out of the Lincoln Castle Dungeons!**");
         var map = subway.repeat(23) + "\n";
         map += map + map;
         getChannel().send(map);
