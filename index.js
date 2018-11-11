@@ -61,7 +61,7 @@ function performVote(msg, dungeon) {
   return new Promise(function(resolve) {
     collector.on('collect', (reaction, collector) => {
       if (!timerStarted && testStr.includes(reaction.emoji.name)) {
-        msg.edit(msg.content + "\n**Someone has voted, 5 second timer stating.**");
+        msg.edit(msg.content + "\n**Someone has voted, 5 second timer starting.**");
         setTimeout(() => {collector.stop()}, 5000)
         timerStarted = true;
         console.log(`Collected ${reaction.emoji.name}`);
@@ -142,7 +142,7 @@ function movePlayer(emoji, dungeon){
     }
   }
   if (dungeon[playerNewI][playerNewJ] === 2){
-    if (PlayerStats.score < 500){
+    if (PlayerStats.score < 0){
       getChannel().send("You must have 500 score to proceed. Slay some more monsters!");
     } else {
       getChannel().send("Proceeding to the next level...");
