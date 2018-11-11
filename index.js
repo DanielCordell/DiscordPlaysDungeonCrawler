@@ -70,11 +70,14 @@ function performVote(msg, dungeon) {
 function movePlayer(emoji, dungeon){
   // dungeon is just an array
   switch(emoji){
-    case '⬅️':
+    case "⬅" :
+      console.log("EMOJI TESTING");
       var playerCurrI = 0; var playerCurrJ = 0; var playerNewI = 0; var playerNewJ = 0;
       // find 9 (player) in dungeon array
       for (i=0; i < dungeon.length; i++){
         if (playerCurrI != 0 || playerCurrJ != 0){
+          console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
+          console.log(dungeon[i][j]);
           break;
         }
         for (j=0; j < dungeon[i].length; j++){
@@ -90,6 +93,11 @@ function movePlayer(emoji, dungeon){
         dungeon[playerNewI][playerNewJ] = 9;
         dungeon[playerCurrI][playerCurrJ] = 0;
       }
+      console.log("CurrI: ", playerCurrI, " CurrJ: ", playerCurrJ);
+      console.log("NewI: ", playerNewI, " NewJ: ", playerNewJ);
+      console.log("NewLocationValue: ", dungeon[playerNewI][playerNewJ]);
+      return dungeon;
+      break;
   }
   return dungeon;
 }
