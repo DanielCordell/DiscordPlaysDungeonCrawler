@@ -14,6 +14,7 @@ module.exports = class Enemy {
     this.multiplier = multiplier + index/4.0;
     this.health = parseInt(rn({min: 10, max: 50, integer: true}) * multiplier);
     this.strength = rn.generator({min: 3, max: 10});
+    this.moved = false;
   }
 
   //Returns new health
