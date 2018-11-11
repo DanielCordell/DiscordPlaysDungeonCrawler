@@ -118,12 +118,13 @@ function movePlayer(emoji, dungeon){
             playerNewI = i-1;
             playerNewJ = playerCurrJ;
             break;
-        } 
+        }
       }
     }
   }
   if (dungeon[playerNewI][playerNewJ] instanceof Enemy){
     var remainingHealth = dungeon[playerNewI][playerNewJ].hit(12);
+    getChannel().send(`You deal 12 damage to the ${dungeon[playerNewI][playerNewJ].name}`);
     if (remainingHealth < 0){
       getChannel().send(`${dungeon[playerNewI][playerNewJ].name} has been killed! +150 score`)
       PlayerStats.score += 150;
