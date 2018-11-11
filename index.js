@@ -123,9 +123,35 @@ function movePlayer(emoji, dungeon){
       }
     }
   }
-
+  if (dungeon[playerNewI][playerNewJ] instanceof Enemy){
+    var remainingHealth = dungeon[playerNewI][playerNewJ].hit(12);
+    if (remainingHealth < 0){
+      getChannel().send(`${dungeon[playerNewI][playerNewJ].name} has been killed! +150 score`)
+      PlayerStats.score += 150;
+      getChannel().send(`Health: **${PlayerStats.health}**\nScore: **${PlayerStats.score}**`);
+      dungeon[playerNewI][playerNewJ] = 0;
+    } else {
+      var hit = dungeon[playerNewI][playerNewJ].hitPlayer();
+      PlayerStats.health -= hit;
+      getChannel().send(`${dungeon[playerNewI][playerNewJ].name} hit you for ${hit} health!`);
+      getChannel().send(`Health: **${PlayerStats.health}**\nScore: **${PlayerStats.score}**`);
+      if (PlayerStats.health < 0){
+        getChannel().send("You pass out from the damage... GAME OVER.");
+        return {"dungeon":dungeon, "shouldLevel":false, "shouldQuit":true};
+      }
+    }
+  }
+  if (dungeon[playerNewI][playerNewJ] === 2){
+    if (PlayerStats.score < 500){
+      getChannel().send("You must have 500 score to proceed. Slay some more monsters!");
+    } else {
+      getChannel().send("Proceeding to the next level...");
+      return {"dungeon":dungeon, "shouldLevel":true, "shouldQuit":false};
+    }
+  }
   if (dungeon[playerNewI][playerNewJ] === 3){
-    PlayerStats.score += 100;
+    PlayerStats.score += 50;
+    getChannel().send(`Health has been restored to max! +50 score`);
     PlayerStats.health = PlayerStats.maxHealth;
     getChannel().send(`Health: **${PlayerStats.health}**\nScore: **${PlayerStats.score}**`);
     dungeon[playerNewI][playerNewJ] = 0;
@@ -133,7 +159,7 @@ function movePlayer(emoji, dungeon){
   if (dungeon[playerNewI][playerNewJ] === 0){
     dungeon[playerNewI][playerNewJ] = 9;
     dungeon[playerCurrI][playerCurrJ] = 0;
-  } else {
+  } else if (dungeon[playerNewI][playerNewJ] === 1){
     getChannel().send("Invalid move, please select another move and try again.")
   }
   return {"dungeon":dungeon, "shouldLevel":false, "shouldQuit":false};
