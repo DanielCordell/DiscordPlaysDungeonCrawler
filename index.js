@@ -3,6 +3,7 @@ const rn = require('random-number');
 
 const config = require('./config.json');
 const Dungeon = require('./map');
+const Enemy = require('./enemies')
 
 const client = new Discord.Client();
 
@@ -19,11 +20,14 @@ client.on('message', msg => {
 async function start() {
   var doQuit = false
   var dungeon = Dungeon.generateDungeon();
+  console.log(dungeon.length);
+  console.log(dungeon[0].length);
   getChannel().send("You are trapped in the Lincoln Castle Dungeons! See if you can make it out alive, together!")
   while (true) {
     Dungeon.parseDungeon(dungeon, client).forEach(message => getChannel().send(message));
     var msg = await getChannel().send("Vote on **this** message to move the player.\n* Either ⬆️ ➡️ ⬇️ or ⬅️.")
     dungeon = await performVote(msg, dungeon);
+    dungeon = moveEnemies(dungeon);
   }
 }
 
@@ -86,8 +90,6 @@ function movePlayer(emoji, dungeon){
         dungeon[playerNewI][playerNewJ] = 9;
         dungeon[playerCurrI][playerCurrJ] = 0;
       }
-      return dungeon;
-      break;
   }
   return dungeon;
 }
@@ -95,30 +97,47 @@ function movePlayer(emoji, dungeon){
 function moveEnemies(dungeon) {
   for (y = 1; y < dungeon.length - 1; ++y){
     for (x = 1; x < dungeon[y].length - 1; ++x){
-      if (!dungeon[y,x] instanceof Enemy) continue;
-
-      randomDir = rn({min:0, max:3, integer:true});
+      console.log(dungeon[y][x]);
+      if (!(dungeon[y][x] instanceof Enemy)) continue;
+      console.log(`moving enemy ${dungeon[y][x].constructor.name}`);
+      var randomDir = rn({min:0, max:3, integer:true});
       for (i = 0; i < 4; ++i) {
         // Next direction
         randomDir += i;
         randomDir = randomDir % 4;
-        switch (randomDir) {
-          case 0: // up
-            if (dungeon[y,x] !== 0) continue;
-            break;
-          case 1: // right 
-            break;
-          case 2: // down
-            break;
-          case 3: // left
-            break;
-          default:
-            console.log("Couldn't move enemy, ignoring.");
-          // give up
+        if (randomDir == 0) { //up
+          if (dungeon[y-1][x] !== 0) continue;
+          var temp = dungeon[y-1][x];
+          dungeon[y-1][x] = dungeon[y][x];
+          dungeon[y][x] = temp;
+          console.log("up");
+          break;
+        } else if (randomDir == 1) { // right
+          if (dungeon[y][x+1] !== 0) continue;
+          var temp = dungeon[y][x+1];
+          dungeon[y][x+1] = dungeon[y][x];
+          dungeon[y][x] = temp;
+          console.log("down");
+          break;
+        } else if (randomDir == 2) { // down
+          if (dungeon[y+1][x] !== 0) continue;
+          var temp = dungeon[y+1][x];
+          dungeon[y+1][x] = dungeon[y][x];
+          dungeon[y][x] = temp;
+          console.log("left");
+          break;
+        } else { // left
+          if (dungeon[y][x-1] !== 0) continue;
+          var temp = dungeon[y][x-1];
+          dungeon[y][x-1] = dungeon[y][x];
+          dungeon[y][x] = temp;
+          console.log("right");
+          break;
         }
       }
     }
   }
+  return dungeon;
 }
 
 
